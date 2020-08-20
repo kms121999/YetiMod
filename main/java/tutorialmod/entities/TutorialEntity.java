@@ -36,20 +36,18 @@ public class TutorialEntity extends MonsterEntity
 	protected void registerAttributes() 
 	{
 		super.registerAttributes();
-<<<<<<< HEAD
+
 		this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20.0d);
 		this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(5.0d);
 		
 		
 		
-		
-=======
+
 		this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(50.0d);
 		this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(150.0d);
 		//this.getAttribute(SharedMonsterAttributes.ATTACK_SPEED).setBaseValue(35.0d);
 		this.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(25.0d);
 		this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(100.0d);
 		this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(1.0d);
->>>>>>> fe670ebdc723b1498927d9e93d610f8f02620396
 	}
 }

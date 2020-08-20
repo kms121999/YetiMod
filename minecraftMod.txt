@@ -1,0 +1,425 @@
+config - Config
+
+package config;
+
+import java.io.File;
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.WritingMode;
+import tutorialmod.TutorialMod;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.common.Mod;
+
+@Mod.EventBusSubscriber
+public class Config 
+{
+	private static final ForgeConfigSpec.Builder SERVER_BUILDER = new ForgeConfigSpec.Builder();
+	public static final ForgeConfigSpec SERVER;
+	
+	private static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
+	public static final ForgeConfigSpec CLIENT;
+	
+	static
+	{
+		OregenConfig.init(SERVER_BUILDER, CLIENT_BUILDER);
+		
+		SERVER = SERVER_BUILDER.build();
+		CLIENT = CLIENT_BUILDER.build();
+	}
+	
+	public static void loadConfig(ForgeConfigSpec config, String path)
+	{
+		TutorialMod.LOGGER.info("Loading config: " + path);
+		final CommentedFileConfig file = CommentedFileConfig.builder(new File(path)).sync().autosave().writingMode(WritingMode.REPLACE).build();
+		TutorialMod.LOGGER.info("Built config: " + path);
+		file.load();
+		TutorialMod.LOGGER.info("Loaded config: " + path);
+		config.setConfig(file);
+	}
+}
+
+config - OregenConfig
+
+package config;
+
+import net.minecraftforge.common.ForgeConfigSpec;
+
+public class OregenConfig 
+{
+	public static ForgeConfigSpec.IntValue tutorial_chance;
+	public static ForgeConfigSpec.BooleanValue generate_overworld;
+	
+	public static void init(ForgeConfigSpec.Builder server, ForgeConfigSpec.Builder client)
+	{
+		server.comment("Oregen Config");
+		
+		tutorial_chance = server
+				.comment("Maximum number of ore veins of the tutorial ore that can spawn in one chunk.")
+				.defineInRange("oregen.tutorial_chance", 20, 1, 1000000);
+		
+		generate_overworld = server
+				.comment("Decide if you want Tutorial Mod ores to spawn in the overworld")
+				.define("oregen.generate_overworld", true);
+	}
+}
+
+tutorialmod - MainClass
+
+package tutorialmod;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+
+@Mod("frin")
+public class MainClass {
+	
+	public static MainClass instance;
+	public static final String modid = "frin";
+	private static final Logger logger = LogManager.getLogger(modid);
+	
+	public MainClass() {
+		
+		instance = this;
+	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientRegistries);
+	MinecraftForge.EVENT_BUS.register(this);
+	}
+	
+	private void setup(final FMLCommonSetupEvent event) {
+		
+		logger.info("Setup method registered");
+	}
+	
+	private void clientRegistries(final FMLClientSetupEvent event) {
+		
+		logger.info("clientRegistries method registered");	
+	}
+}
+
+
+tutorialmod - TutorialEntities
+
+package tutorialmod;
+
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntityType;
+import net.minecraft.item.SpawnEggItem;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biome.SpawnListEntry;
+import net.minecraft.world.biome.Biomes;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraft.item.Item;
+import tutorialmod.entities.TutorialEntity;
+import tutorialmod.TutorialModRegistries;
+// sets up creating a new entity 
+public class TutorialEntities {
+	// this creates a new entity
+	public static EntityType<?> TUTORIAL_ENTITY = EntityType.Builder.create(TutorialEntity::new, EntityClassification.MONSTER).build(TutorialModRegistries.MODID + ":tutorial entity").setRegistryName(TutorialModRegistries.location("tutorial entity"));
+	// this creates a spawn egg for the entity
+	public static void registerEntitiySpawnEggs(final RegistryEvent.Register<Item> event) {
+		event.getRegistry().registerAll(
+			TutorialItems.tutorial_entity_egg = registerEntitySpawnEgg(TUTORIAL_ENTITY, 0x326ba8, 0x3296a8,"yeti")
+			);
+	}
+	
+	// this tells where the entity will spawn
+	public static void registerEntityWorldSpawns() {
+		
+		registerEntityWorldSpawn(TUTORIAL_ENTITY, Biomes.BIRCH_FOREST, Biomes.DARK_FOREST, Biomes.SNOWY_MOUNTAINS,
+				Biomes.SNOWY_TUNDRA, Biomes.SNOWY_TAIGA);
+	}
+	// this creates what the color of the egg will look like
+	public static Item registerEntitySpawnEgg(EntityType<?> type, int color1, int color2, String name){
+		
+		SpawnEggItem item = new SpawnEggItem(type, color1, color2, new Item.Properties().group(TutorialModRegistries.TUTORIAL));
+		item.setRegistryName(TutorialModRegistries.location(name));
+		return item;
+	}
+	// registers how many can spawn near each other
+	public static void registerEntityWorldSpawn(EntityType<?> entity,Biome...biomes) {
+		
+		for(Biome biome : biomes) {
+			if (biome != null) {
+				biome.getSpawns(entity.getClassification()).add(new SpawnListEntry(entity, 5, 1, 2));
+			}
+		}
+	}
+	
+}
+
+tutorialmod - TutorialItemGroup
+
+package tutorialmod;
+
+import tutorialmod.TutorialItems;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+
+public class TutorialItemGroup extends ItemGroup
+{
+	public TutorialItemGroup() 
+	{
+		super("tutorial");
+	}
+
+	@Override
+	public ItemStack createIcon() 
+	{
+		return new ItemStack(TutorialItems.tutorial_item);
+	}
+}
+
+tutorialmod - TutorialItems
+
+package tutorialmod;
+
+import net.minecraft.item.Item;
+
+public class TutorialItems {
+
+	public static Item tutorial_item;
+	public static Item tutorial_entity_egg;
+}
+
+
+tutorialmod - TutorialMod
+
+package tutorialmod;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import net.minecraft.item.ItemGroup;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
+import tutorialmod.client.render.TutorialRenderRegistry;
+import config.Config;
+
+@Mod("tutorialmod")
+public class TutorialMod 
+{
+	public static TutorialMod instance;
+	public static final String MODID = "tutorialmod";
+	public static final Logger LOGGER = LogManager.getLogger(MODID);
+	public static final ItemGroup TUTORIAL = new TutorialItemGroup();
+	
+	public TutorialMod() 
+	{
+		instance = this;
+		
+		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER, "tutorialmod-server.toml");
+		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT, "tutorialmod-client.toml");
+		
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientRegistries);
+		
+		Config.loadConfig(Config.CLIENT, FMLPaths.CONFIGDIR.get().resolve("tutorialmod-client.toml").toString());
+		Config.loadConfig(Config.SERVER, FMLPaths.CONFIGDIR.get().resolve("tutorialmod-server.toml").toString());
+		
+		MinecraftForge.EVENT_BUS.register(this);
+	}
+	
+	private void setup(final FMLCommonSetupEvent event)
+	{
+		LOGGER.info("Setup method registered.");
+	}
+	
+	private void clientRegistries(final FMLClientSetupEvent event)
+	{
+		TutorialRenderRegistry.registerEntityRenders();
+		LOGGER.info("clientRegistries method registered.");
+	}
+}
+
+tutorialmod - TutorialModRegistries
+
+package tutorialmod;
+
+import org.apache.logging.log4j.Logger;
+import tutorialmod.TutorialEntities;
+import net.minecraft.block.Block;
+import net.minecraft.entity.EntityType;
+import net.minecraft.item.Item;
+import net.minecraft.item.Item.Properties;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+// registers the entity
+@Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
+public class TutorialModRegistries {
+
+	public static final ItemGroup TUTORIAL = TutorialMod.TUTORIAL;
+	public static final Logger LOGGER = TutorialMod.LOGGER;
+	public static final String MODID = TutorialMod.MODID;
+	// registers the spawn egg
+	@SubscribeEvent
+	public static void registerItems(final RegistryEvent.Register<Item> event) {
+		event.getRegistry().registerAll();
+		
+		TutorialEntities.registerEntitiySpawnEggs(event);
+		
+		LOGGER.info("Items registered.");
+		
+		}
+	// not really useful for what we are trying to do, don't worry too much about this part
+	@SubscribeEvent
+	public static void registerBlocks(final RegistryEvent.Register<Block> event) {
+		event.getRegistry().registerAll();
+		LOGGER.info("Blocks registered");
+		
+	}
+	// registers the entity
+	@SubscribeEvent
+	public static void registerEntities(final RegistryEvent.Register<EntityType<?>> event) {
+		
+		event.getRegistry().registerAll(
+				TutorialEntities.TUTORIAL_ENTITY	
+		);
+		
+		TutorialEntities.registerEntityWorldSpawns();
+	}
+	// this returns the resource location
+	public static ResourceLocation location(String name) {
+		return new ResourceLocation(MODID, name);
+	}
+}
+
+
+tutorialmod.client.models - TutorialEntityModel
+
+package tutorialmod.client.models;
+
+import net.minecraft.client.renderer.entity.model.CowModel;
+import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import tutorialmod.entities.TutorialEntity;
+// this is the model for the entity, we will also need to add to this further
+@OnlyIn(Dist.CLIENT)
+public class TutorialEntityModel extends CowModel<TutorialEntity> {
+
+}
+
+
+tutorialmod.client.render - TutorialEntityRender
+
+package tutorialmod.client.render;
+
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.LivingRenderer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
+import tutorialmod.TutorialModRegistries;
+import tutorialmod.client.models.TutorialEntityModel;
+import tutorialmod.entities.TutorialEntity;
+
+@OnlyIn(Dist.CLIENT)
+public class TutorialEntityRender extends LivingRenderer<TutorialEntity, TutorialEntityModel>
+{
+	public TutorialEntityRender(EntityRendererManager manager) 
+	{
+		super(manager, new TutorialEntityModel(), 0f);
+	}
+
+	@Override
+	public ResourceLocation getEntityTexture(TutorialEntity entity) 
+	{
+		return TutorialModRegistries.location("textures/entity/tutorial_entity.png");
+	}
+
+	public static class RenderFactory implements IRenderFactory<TutorialEntity>
+	{
+		@Override
+		public EntityRenderer<? super TutorialEntity> createRenderFor(EntityRendererManager manager) 
+		{
+			return new TutorialEntityRender(manager);
+		}
+		
+	}
+}
+
+
+tutorialmod.client.render - TutorialRenderRegistry
+
+package tutorialmod.client.render;
+
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import tutorialmod.entities.TutorialEntity;
+
+// this registers the renderer of the entity
+@OnlyIn(Dist.CLIENT)
+public class TutorialRenderRegistry {
+	
+	public static void registerEntityRenders() {
+	RenderingRegistry.registerEntityRenderingHandler(TutorialEntity.class, IRenderFactory<TutorialEntity>);
+	}
+}
+
+
+tutorialmod.entities - TutorialEntity
+
+package tutorialmod.entities;
+
+import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.goal.LeapAtTargetGoal;
+import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+import net.minecraft.entity.ai.goal.RandomWalkingGoal;
+import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.world.World;
+import tutorialmod.TutorialEntities;
+// this gives the movement and attributes of the entity
+public class TutorialEntity extends CreatureEntity {
+
+	@SuppressWarnings("unchecked")
+	public TutorialEntity(EntityType<? extends CreatureEntity> type, World worldIn) {
+		super((EntityType<? extends CreatureEntity>) TutorialEntities.TUTORIAL_ENTITY, worldIn);
+		
+	}
+	
+	@Override
+	protected void registerGoals() {
+		this.goalSelector.addGoal(0, new SwimGoal(this));
+		this.goalSelector.addGoal(1, new RandomWalkingGoal(this, 5));
+		this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 25, true));
+		this.goalSelector.addGoal(2, new LeapAtTargetGoal(this, 25));
+		
+	}
+
+	@Override
+	protected void registerAttributes() {
+		super.registerAttributes();
+		this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(50.0d);
+		this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(150.0d);
+		this.getAttribute(SharedMonsterAttributes.ATTACK_SPEED).setBaseValue(35.0d);
+		this.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(25.0d);
+		this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(100.0d);
+		this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(1.0d);
+		
+	}
+	
+	
+}
+
+

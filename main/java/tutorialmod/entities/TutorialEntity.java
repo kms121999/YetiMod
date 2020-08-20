@@ -36,13 +36,6 @@ public class TutorialEntity extends MonsterEntity
 	protected void registerAttributes() 
 	{
 		super.registerAttributes();
-
-		this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20.0d);
-		this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(5.0d);
-		
-		
-		
-
 		this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(50.0d);
 		this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(150.0d);
 		//this.getAttribute(SharedMonsterAttributes.ATTACK_SPEED).setBaseValue(35.0d);

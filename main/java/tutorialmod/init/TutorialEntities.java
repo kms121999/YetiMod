@@ -27,7 +27,7 @@ public class TutorialEntities
 	
 	public static void registerEntityWorldSpawns()
 	{
-		registerEntityWorldSpawn(tutorial_entity, Biomes.PLAINS, Biomes.BEACH, Biomes.JUNGLE);
+		registerEntityWorldSpawn(tutorial_entity, Biomes.PLAINS, Biomes.BEACH, Biomes.JUNGLE, Biomes.MOUNTAINS);
 	}
 	
 	public static Item registerEntitySpawnEgg(EntityType<?> type, int color1, int color2, String name)

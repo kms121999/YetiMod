@@ -17,13 +17,13 @@ public class TutorialEntityRender extends LivingRenderer<TutorialEntity, Tutoria
 {
 	public TutorialEntityRender(EntityRendererManager manager) 
 	{
-		super(manager, new TutorialEntityModel(), 0f);
+		super(manager, new TutorialEntityModel(), 1f);
 	}
 
 	@Override
 	public ResourceLocation getEntityTexture(TutorialEntity entity) 
 	{
-		return TutorialModRegistries.location("textures/entity/tutorial_entity.png");
+		return TutorialModRegistries.location("textures/entity/iron_golem.png");
 	}
 
 	public static class RenderFactory implements IRenderFactory<TutorialEntity>

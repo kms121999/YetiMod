@@ -23,7 +23,7 @@ public class TutorialEntityRender extends LivingRenderer<TutorialEntity, Tutoria
 	@Override
 	public ResourceLocation getEntityTexture(TutorialEntity entity) 
 	{
-		return TutorialModRegistries.location("textures/entity/iron_golem.png");
+		return TutorialModRegistries.location("textures/entity/tutorial_entity.png");
 	}
 
 	public static class RenderFactory implements IRenderFactory<TutorialEntity>

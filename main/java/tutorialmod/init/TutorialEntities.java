@@ -14,7 +14,7 @@ import net.minecraftforge.event.RegistryEvent;
 
 public class TutorialEntities 
 {
-	public static EntityType<?> tutorial_entity = EntityType.Builder.create(TutorialEntity::new, EntityClassification.CREATURE).build(TutorialModRegistries.MODID + ":tutorial_entity").setRegistryName(TutorialModRegistries.location("tutorial_entity"));
+	public static EntityType<?> tutorial_entity = EntityType.Builder.create(TutorialEntity::new, EntityClassification.MONSTER).build(TutorialModRegistries.MODID + ":tutorial_entity").setRegistryName(TutorialModRegistries.location("tutorial_entity"));
 	
 	public static void registerEntitySpawnEggs(final RegistryEvent.Register<Item> event)
 	{

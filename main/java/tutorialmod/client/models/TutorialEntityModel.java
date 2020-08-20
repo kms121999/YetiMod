@@ -4,6 +4,7 @@ import tutorialmod.entities.TutorialEntity;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.ModelBox;
+import net.minecraft.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -20,7 +21,7 @@ public class TutorialEntityModel extends EntityModel<TutorialEntity>
 	private final RendererModel misc;
 	private final RendererModel leftLeg;
 
-	public ModelIronGolem() {
+	public TutorialEntityModel() {
 		textureWidth = 128;
 		textureHeight = 128;
 
@@ -71,7 +72,7 @@ public class TutorialEntityModel extends EntityModel<TutorialEntity>
 	}
 
 	@Override
-	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
+	public void render(TutorialEntity entity, float f, float f1, float f2, float f3, float f4, float f5) {
 		chest.render(f5);
 		torso.render(f5);
 		leftArm.render(f5);

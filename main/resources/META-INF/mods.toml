@@ -7,6 +7,7 @@ authors="Nic and Keaton" #optional
 modId="tutorialmod" #mandatory
 version="0.1.0" #mandatory
 displayName="Yeti" #mandatory
+authors="Nic and Keaton" #optional
 description='''
 This is my mod.
 It's great.

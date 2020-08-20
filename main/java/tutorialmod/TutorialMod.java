@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 import tutorialmod.client.renders.TutorialRenderRegistry;
 import tutorialmod.config.Config;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.world.WorldType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;

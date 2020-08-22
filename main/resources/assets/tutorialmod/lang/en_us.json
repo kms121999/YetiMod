@@ -1,6 +1,7 @@
 {
   "item.tutorialmod.tutorial_item": "Tutorial Item",
   "item.tutorialmod.tutorial_entity_egg": "Tutorial Entity Egg",
+  "item.tutorialmod.yeti_head": "Yeti Head",
   "itemGroup.tutorial": "Tutorial Item Group",
   "entity.tutorialmod.tutorial_entity": "yeti"
 }

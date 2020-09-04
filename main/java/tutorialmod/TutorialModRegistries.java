@@ -5,11 +5,13 @@ import org.apache.logging.log4j.Logger;
 import tutorialmod.init.ArmorMaterials;
 import tutorialmod.init.TutorialEntities;
 import tutorialmod.init.TutorialItems;
+import tutorialmod.init.TutorialToolMaterials;
 import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.SwordItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,7 +31,9 @@ public class TutorialModRegistries
 		(
 			TutorialItems.tutorial_item = new Item(new Item.Properties().group(TUTORIAL)).setRegistryName(location("tutorial_item")),
 			
-			TutorialItems.yeti_head = new ArmorItem(ArmorMaterials.yeti, EquipmentSlotType.HEAD, new Item.Properties().group(TUTORIAL)).setRegistryName(location("yeti_head"))
+			TutorialItems.yeti_head = new ArmorItem(ArmorMaterials.yeti, EquipmentSlotType.HEAD, new Item.Properties().group(TUTORIAL)).setRegistryName(location("yeti_head")),
+			
+			TutorialItems.yeti_claws = new SwordItem(TutorialToolMaterials.tutorial, 3, 12.0f, new Item.Properties().group(TUTORIAL)).setRegistryName(location("yeti_claws"))
 		);
 		
 		TutorialEntities.registerEntitySpawnEggs(event);

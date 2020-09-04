@@ -38,16 +38,16 @@ public class TutorialEntity extends MonsterEntity
 	{
 		super.registerAttributes();
 		this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(50.0d);
-		this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(15.0d);
+		this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(150.0d);
 		//this.getAttribute(SharedMonsterAttributes.ATTACK_SPEED).setBaseValue(35.0d);
-		this.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(1.0d);
+		this.getAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(10.0d);
 		this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(100.0d);
 		this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(1.0d);
 	}
 	
 	@Override
     protected int getExperiencePoints(PlayerEntity player) {
-      return 100;
+      return 9999;
     }
 	
 }
